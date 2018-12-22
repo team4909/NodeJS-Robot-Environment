@@ -346,7 +346,7 @@ ServerTest.prototype.validateResponseObject =
                          response.error.code,
                          "Mismatched error code" + idMsg);
   }
-}
+  };
 
 /** Test all requests */
 ServerTest.prototype.testAll = function()
@@ -396,7 +396,7 @@ ServerTest.prototype.testAll = function()
     this);
   assert.assertEquals(4, 3+1, "This should never fail!");
   assert.assertFalse(false, "Can false be true?!");
-}
+};
 
 /**
  * The service factory takes a method name and attempts to produce a
@@ -422,7 +422,7 @@ ServerTest.prototype._serviceFactory = function(methodName, error)
   }
 
   return f;
-}
+};
 
 /**
  * Register a service name and function.
@@ -449,12 +449,12 @@ ServerTest.prototype.registerService =
 
   // Save the service
   this._services[serviceName] = f;
-}
+};
 
 ServerTest.prototype.subtract = function(minuend, subtrahend)
 {
   return minuend - subtrahend;
-}
+};
 
 ServerTest.prototype.sum = function()
 {
@@ -465,21 +465,21 @@ ServerTest.prototype.sum = function()
       sum += arg;
     });
   return sum;
-}
+};
 
 ServerTest.prototype.update = function(p1, p2, p3, p4, p5)
 {
   return true;
-}
+};
 
 ServerTest.prototype.hello = function(p1)
 {
-}
+};
 
 ServerTest.prototype.get_data = function()
 {
   return [ "hello", 5 ];
-}
+};
 
 
 //
