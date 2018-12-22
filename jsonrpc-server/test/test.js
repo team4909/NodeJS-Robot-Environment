@@ -459,7 +459,9 @@ ServerTest.prototype.subtract = function(minuend, subtrahend)
 ServerTest.prototype.sum = function()
 {
   var sum = 0;
-  Array.from(arguments).forEach(
+  var args = Array.slice.call(null, arguments);
+  var error = args.pop();
+  args.forEach(
     function(arg)
     {
       sum += arg;
