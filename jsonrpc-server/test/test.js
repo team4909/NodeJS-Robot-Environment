@@ -14,7 +14,7 @@
  * Unit tests for the JSON-RPC Server
  */
 
-var server = require("../lib/Server");
+var server = require("../lib/JsonRpcServer");
 var assert = require("./Assert");
 
 
