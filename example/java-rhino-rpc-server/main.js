@@ -8,12 +8,13 @@ var             response;
 var             serverSocket;
 var             clientSocket;
 var             jsonrpcServer;
-var             jsonrpc = require("Server.js");
+var             jsonrpc = require("JsonRpcServer.js");
 
 // Register the remote procedure calls we support
 registerRpc("echo",     echo,     [ ]);
-registerRpc("newJava",  newJava,  [ "clazz" ]);
-registerRpc("callJava", callJava, [ "obj", "method" ]);
+registerRpc("getDeclaredMethods", getDeclaredMethods,  [ "clazz" ]);
+registerRpc("newJava",            newJava,             [ "clazz" ]);
+registerRpc("callJava",           callJava,            [ "obj", "method" ]);
 
 // Initialize the JSON-RPC Server, providing it our available methods
 jsonrpcServer = new jsonrpc.Server(serviceFactory);
@@ -140,6 +141,52 @@ function echo(/*argsToBeEchoed..., */ error)
   return args;
 }
 
+
+/**
+ * Get the declared methods of a class
+ *
+ * @param clazz {String}
+ *   The name of the class whose methods are to be enumerated
+ *
+ * @param error {JsonRpc.Error}
+ *   Error object. Its `setCode`, `setMessage`, and `setData` methods may be
+ *   called, and this object returned from an RPC method, if/when an error
+ *   occurs.
+ *
+ * @return {Array}
+ *   List of method names
+ */
+function getDeclaredMethods(clazz, error)
+{
+  var             c;
+  var             ret;
+  
+  try
+  {
+    print("clazz=", clazz);
+    c = java.lang.Class.forName(clazz);
+    print("c=", c);
+
+    ret =
+      c
+      .getDeclaredMethods()
+      .map(
+        function(method)
+        {
+          return String(method.getName());
+        })
+      .sort();
+
+    return ret;
+  }
+  catch(e)
+  {
+    print("Error:", e);
+    return [];
+  }
+}
+
+
 /**
  * Instantiate a new Java class instance
  *
@@ -153,6 +200,9 @@ function echo(/*argsToBeEchoed..., */ error)
  *   Error object. Its `setCode`, `setMessage`, and `setData` methods may be
  *   called, and this object returned from an RPC method, if/when an error
  *   occurs.
+ *
+ * @return {String}
+ *   The string identifier of the instance just created
  */
 function newJava(clazz /*, constructorArgs..., error*/)
 {
@@ -210,6 +260,9 @@ function newJava(clazz /*, constructorArgs..., error*/)
  *   Error object. Its `setCode`, `setMessage`, and `setData` methods may be
  *   called, and this object returned from an RPC method, if/when an error
  *   occurs.
+ *
+ * @return {Any}
+ *   The return value from the called Java function
  */
 function callJava(obj, method /*, funcArgs..., error*/)
 {
