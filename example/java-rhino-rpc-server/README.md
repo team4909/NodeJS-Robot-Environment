@@ -9,6 +9,8 @@ three remote procedure calls implemented:
   - Instantiate a new Java object of a given class
 - callJava
   - Call a given method of a given Java object
+- getDeclaredMethods
+  - Retrieve the list of methods available in a class
 
 To run it, given a normal Linux environment:
 - Compile the Java code:
