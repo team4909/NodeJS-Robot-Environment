@@ -22,14 +22,19 @@ async function rpc(method, params)
   promise = new Promise(
     (resolve, reject) =>
       {
-        this._client.write(
+        let             request;
+
+        request =
           JSON.stringify(
             {
               "jsonrpc" : "2.0",
               "method"  : method,
               "params"  : params,
               "id"      : "" + ++id
-            }) + "\n");
+            }) + "\n";
+
+        console.log("Sending: " + request);
+        this._client.write(request);
 
         // Save the resolve and reject functions for when we receive result
         pendingRequests[id] =
@@ -59,7 +64,7 @@ ret.callJava = async function(obj, method /*, params...*/)
   return rpc("callJava", params);
 };
 
-ret.newJava = async function(clazz /*, params...*/)
+ret.newJava = async function(jsJavaInstName, clazz /*, params...*/)
 {
   let             params;
 
@@ -74,13 +79,13 @@ ret.newJava = async function(clazz /*, params...*/)
 /**
  * Create the Java Call client
  *
- * @param port {Number?9999}
- *   Port number to connect to
- *
  * @param ipAddr {String?127.0.0.1}
  *   IP address to connect to
+ *
+ * @param port {Number?9999}
+ *   Port number to connect to
  */
-let JavaCallClient = function(port, ipAddr)
+let JavaCallClient = function(ipAddr, port)
 {
   let             net = require("net");
 

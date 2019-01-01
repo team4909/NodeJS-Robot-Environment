@@ -1,16 +1,21 @@
 async function main()
 {
-  let             javaCallClient = require("./JavaCallClient")();
-  let             javaInterface = new require("./Java")(javaCallClient);
+  let             motorLeft;
+  let             motorRight;
+  let             drivetrainDriveControl;
+  let             javaCallClient = require("./JavaCallClient")("10.49.9.2");
+  let             javaInterface = new (require("./Java"))(javaCallClient);
 
-  // Import the Java classes we will want to use
-  await javaInterface.import("java.io.File");
+  await javaInterface.import("edu.wpi.first.wpilibj.Spark");
+  await javaInterface.import("edu.wpi.first.wpilibj.RobotDrive");
 
-  // Instantiate the newly-imported class
-  let file = new java.io.File("x.y");
+  motorLeft = await edu.wpi.first.wpilibj.Spark.$(0);
+  motorRight = await edu.wpi.first.wpilibj.Spark.$(1);
 
-  // Call a method on that class, awaiting its result.
-  console.log("file.exists=", await file.exists());
+  drivetrainDriveControl =
+    await edu.wpi.first.wpilibj.RobotDrive.$(motorLeft, motorRight);
+  
+  await drivetrainDriveControl.arcadeDrive(0.5, 0);
 }
 
 main();
