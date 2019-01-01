@@ -9,6 +9,7 @@
  *   * Derrell Lipman (derrell)
  */
 
+let             unique = 0;     // uniqueness for instance names
 let             javaCallClient = require("./JavaCallClient");
 const           _defineJavaClass = Symbol("_defineJavaClass");
 
@@ -48,9 +49,28 @@ let Java = class
         // Save the class name
         this._clazz = clazz;
 
+        // Create the instance name shared with the Java side
+        this._jsJavaInstName = "[" + clazz + "#" + ++unique + "]";
+      }
+
+      // Create an instance of this class
+      static async $(/* args... */)
+      {
+        let             c;
+        let             args;
+        let             promises;
+
+        // Instantiate a new object of this type
+        c = new this();
+
+        args =
+          Array.prototype.slice.apply(arguments)
+          .map(arg => arg && arg._jsJavaInstName ? arg._jsJavaInstName : arg);
+
         // Issue the request to instantiate a new object
-        this._constructorPromise = client.newJava(
-          clazz, Array.prototype.slice.apply(arguments));
+        await client.newJava(c._jsJavaInstName, clazz, args);
+
+        return c;
       }
     };
     Object.defineProperty(c, "name", { value : clazz });
@@ -69,18 +89,22 @@ let Java = class
             if (this._constructorPromise)
             {
               // ... then await it.
-              this._objName = await this._constructorPromise;
+              await this._constructorPromise;
               this._constructorPromise = null;
             }
 
-            // Build the method argument list as _objName, then method, then
-            // whatever additional arguments were passed to this method call.
-            args = Array.prototype.slice.apply(arguments);
-            args.unshift(method);
-            args.unshift(this._objName);
+            // Each argument that is a JsJava class built here, should be
+            // mapped to its instance name
+            args =
+              Array.prototype.slice.apply(arguments)
+              .map(arg =>
+                   arg && arg._jsJavaInstName ? arg._jsJavaInstName : arg);
 
             // Now we can issue the requested Java call
-            result = await _this._client.callJava.apply(null, args);
+            result = await _this._client.callJava(
+              this._jsJavaInstName,
+              method,
+              args);
             return result;
           };
         });
