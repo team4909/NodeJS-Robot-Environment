@@ -4,7 +4,7 @@ A NodeJS-based JavaScript environment for FRC Robotics
 The goal here is to play with writing JavaScript code to control robots. The
 concept, as currently implemented, is that the robot runs the Java
 environment, including a remote procedure call server
-([example](https://github.com/FRCteam4909/NodeJS-Robot-Environment/tree/master/example/java-rhino-rpc-server)
+([example](https://github.com/FRCteam4909/NodeJS-Robot-Environment/tree/master/example/java-rhino-rpc-server))
 that runs with the assistance of the Rhino JavaScript engine, and has full
 interactivity with the Java environment of WPILIB. A JavaScript client running
 with NodeJS, then, can, with little up-front work, instantiate a JavaScript
